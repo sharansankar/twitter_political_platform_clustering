@@ -15,3 +15,13 @@ Thus from these 3 cases, the tweets that fall under case 2 can be said to be exe
 ##Implementation 
 ###Tweets 
 This clustering algorithm was implemented using the Hillary Clinton and Donald Trump Tweets dataset on kaggle (https://www.kaggle.com/benhamner/clinton-trump-tweets). 
+
+
+##Data Exploration and Preprocessing
+Intuitively, I would believe that the candidates would use twitter as a medium to explain key elements of their platform to the public. To analyze the data I thought by filtering the tweets and creating a word cloud of each candidates tweets, there would be key words that would appear ('immigration','jobs','military',etc.). I preprocessed the data by: 
+  1. Tokenizing the tweets
+  2. Filtering out punctuation and twitter handles
+  3. lemmatizing all tokens 
+  4. Filtering out stopwords 
+
+After preprocessing the tweets, the 
