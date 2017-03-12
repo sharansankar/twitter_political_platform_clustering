@@ -8,8 +8,11 @@ from sklearn.decomposition import LatentDirichletAllocation
 from sklearn.cluster import SpectralClustering
 import numpy as np
 import math
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud
+from nltk.stem.wordnet import WordNetLemmatizer
 
-stop_words = stopwords.words('english')
+stop_words = stopwords.words('english') #+ ['donald', 'hillary', 'trump', 'clinton', 'ha', "trump's", 'thank', 'great','wa', 'new']
 def read_data(path):
     df = pd.read_csv(path,header=0)
     df = df[['handle','text']]
@@ -30,22 +33,32 @@ def clean_data(intweets):
     #tokenize tweets
     for x in range(len(intweets)):
         #removing hashtags
-        intweets[x] = intweets[x].strip('#')
+        intweets[x] = intweets[x].replace('#','')
 
 
         #remove tweets that have less than 3 words
-        if len(tokenize_tweet.tokenize(intweets[x])) > 2:
+        if len(tokenize_tweet.tokenize(intweets[x])) > 3:
             tweets.append(tokenize_tweet.tokenize(intweets[x]))
 
-        #removing stop words
-        tweets[-1] = filter(lambda x: x not in stop_words, tweets[-1])
+            # removing punctuation
+            tweets[-1] = filter(lambda x: x not in string.punctuation, tweets[-1])
 
-        #removing punctuation
-        tweets[-1] = filter(lambda x: x not in string.punctuation,tweets[-1])
 
-        #remove links
-        tweets[-1] = filter(lambda x: 'https' not in x, tweets[-1])
-        tweets[-1] = ' '.join(tweets[-1])
+            #lemmatizing
+            lemmatizer = WordNetLemmatizer()
+            for y in range(len(tweets[-1])):
+                #print tweets[-1][y]
+                tweets[-1][y] = lemmatizer.lemmatize(tweets[-1][y])
+                #print tweets[-1][y]
+
+            #removing stop words
+            tweets[-1] = filter(lambda x: x not in stop_words, tweets[-1])
+
+
+
+            #remove links
+            tweets[-1] = filter(lambda x: 'https' not in x, tweets[-1])
+            tweets[-1] = ' '.join(tweets[-1])
 
 
     return tweets
@@ -83,7 +96,7 @@ def exemplar_tweet_extraction(sim_matrix, tweets, unfiltered_tweets):
 
     exemplar_index.append(var_vec.index(sorted_variances[0]))
 
-    while (topics < 11 ):
+    while (topics < 9 ):
         #print sim_matrix[exemplar_tweet_index][current_tweet_index]
         exemplar_tweet_index = var_vec.index(sorted_variances[0])
         while sim_matrix[exemplar_tweet_index][current_tweet_index] > 0.01:
@@ -112,9 +125,21 @@ def exemplar_clustering(tweets,exemplar_indexes,sim_matrix):
         for y in range(len(exemplar_indexes)):
             sim_vals[y] = sim_matrix[x][y]
 
-        if max(sim_vals) >= 0.40:
+        if max(sim_vals) >= 0.10:
             tweet_clusters[sim_vals.index(max(sim_vals))].append(tweets[x])
     return tweet_clusters
+
+def create_wordcloud(intweets):
+    combined_tweets = ' '.join(intweets)
+
+
+    word_cloud = WordCloud(font_path='/Library/Fonts/Verdana.ttf',
+                          relative_scaling=1.0,
+                          stopwords='None'
+                          ).generate(combined_tweets)
+    plt.imshow(word_cloud)
+    plt.axis("off")
+    plt.show()
 
 def lda_clustering(tfidf):
     lda = LatentDirichletAllocation(n_jobs=-1)
@@ -133,23 +158,21 @@ def spectral_clustering(tfidf, tweets):
 if __name__ == '__main__':
     trump, clinton = read_data('tweets.csv')
     #clinton = np.concatenate((trump, clinton), axis=0)
-    clinton_clean = clean_data(clinton)
-    clinton_sim_matrix, clinton_tfidf = generate_similarity_matrix(clinton_clean)
-    exemplar_clinton = exemplar_tweet_extraction(clinton_sim_matrix,clinton_clean, clinton)
+    #clinton_clean = clean_data(clinton)
+    trump_clean = clean_data(trump)
+    create_wordcloud(trump_clean)
 
-    clinton_clustered = exemplar_clustering(clinton,exemplar_clinton, clinton_sim_matrix)
-
-    for x in range(len(clinton_clustered)):
-        print "----------------cluster: ",x,"------------------"
-        print clinton_clustered[x]
-    #exemplar_clinton = spectral_clustering(clinton_tfidf.transpose(),clinton)
-
-    # for x in range(len(exemplar_clinton)):
-    #     print "-------------cluster: ",x,"-----------------"
-    #     for y in range(len(exemplar_clinton[x])):
-    #         print exemplar_clinton[x][y]
-
-
+    # clinton_sim_matrix, clinton_tfidf = generate_similarity_matrix(clinton_clean)
+    # exemplar_clinton = exemplar_tweet_extraction(clinton_sim_matrix,clinton_clean, clinton)
+    #
+    # clinton_clustered = exemplar_clustering(clinton,exemplar_clinton, clinton_sim_matrix)
+    #
     # trump_clean = clean_data(trump)
     # trump_sim_matrix,trump_tfidf = generate_similarity_matrix(trump_clean)
     # exemplar_trump = exemplar_tweet_extraction(trump_sim_matrix.transpose(),trump_clean, trump)
+    # trump_clustered = exemplar_clustering(trump,exemplar_trump,trump_sim_matrix)
+
+
+    # for x in range(len(trump_clustered)):
+    #     print "----------------cluster: ",x,"------------------"
+    #     print trump_clustered[x]
