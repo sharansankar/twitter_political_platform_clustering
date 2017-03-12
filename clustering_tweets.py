@@ -158,9 +158,9 @@ def spectral_clustering(tfidf, tweets):
 if __name__ == '__main__':
     trump, clinton = read_data('tweets.csv')
     #clinton = np.concatenate((trump, clinton), axis=0)
-    #clinton_clean = clean_data(clinton)
+    clinton_clean = clean_data(clinton)
     trump_clean = clean_data(trump)
-    create_wordcloud(trump_clean)
+    create_wordcloud(clinton_clean)
 
     # clinton_sim_matrix, clinton_tfidf = generate_similarity_matrix(clinton_clean)
     # exemplar_clinton = exemplar_tweet_extraction(clinton_sim_matrix,clinton_clean, clinton)
