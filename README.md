@@ -15,3 +15,33 @@ Thus from these 3 cases, the tweets that fall under case 2 can be said to be exe
 ##Implementation 
 ###Tweets 
 This clustering algorithm was implemented using the Hillary Clinton and Donald Trump Tweets dataset on kaggle (https://www.kaggle.com/benhamner/clinton-trump-tweets). 
+
+
+##Data Exploration and Preprocessing
+Intuitively, I would believe that the candidates would use twitter as a medium to explain key elements of their platform to the public. To analyze the data I thought by filtering the tweets and creating a word cloud of each candidates tweets, there would be key words that would appear ('immigration','jobs','military',etc.). I preprocessed the data by: 
+  1. Tokenizing the tweets
+  2. Filtering out punctuation and twitter handles
+  3. lemmatizing all tokens 
+  4. Filtering out stopwords 
+
+After preprocessing the tweets, the wordclouds generated failed to abide by my assumptions: 
+__Donald Trump Tweets__
+![Trump](images/trump_cloud.png)
+
+__Hillary Clinton Tweets__
+![Hillary](images/clinton_cloud.png) 
+
+As we can see the most frequent terms that candidates tweeted were their rivals. What stood out to me most was that Hillary's tweets talked most about Tump, but Trump's tweets also talked most about himself. Thus after looking at the tweets, I was unsure of the success of clustering by topic but decided to continue pursuing the goal.
+
+##Clustering 
+After viewing the data, I hoped that topics could be detected in the tweets through calculating variance on the similarity scores of each tweet's tfidf value. By calculating the tfidf values, hopefully words like 'Trump' and 'Hillary' would be tagged as unimportant. Thus clustering followed the procedure of: 
+  1. Generating the tfidf of each candidate's tweets where each tweet would be considered as a document. 
+  2. Creating a similarity matrix between the tweets where cosine distance is used as the similarity function. 
+  3. Calculating mean and variance of each row of the similarity matrix. This would give us the variance of each tweet. 
+  4. Selecting the 10 tweets with the highest variance. Tweets were also selected if they had a cosine similarity of 0 between the previous exemplar tweet, this would allow for exemplar tweets to be selected that represented different topics. 
+  5. Clustering the remaining tweets based on which exemplar tweet they had the highest similarity to. 
+  6. Generating a tfidf matrix of the clusters.  
+  7. combining clusters of the candidates based on which clusters have the highest cosine similarity. 
+  
+
+
