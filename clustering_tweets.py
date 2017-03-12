@@ -160,12 +160,12 @@ if __name__ == '__main__':
     #clinton = np.concatenate((trump, clinton), axis=0)
     clinton_clean = clean_data(clinton)
     trump_clean = clean_data(trump)
-    create_wordcloud(clinton_clean)
+    #create_wordcloud(clinton_clean)
 
-    # clinton_sim_matrix, clinton_tfidf = generate_similarity_matrix(clinton_clean)
-    # exemplar_clinton = exemplar_tweet_extraction(clinton_sim_matrix,clinton_clean, clinton)
+    clinton_sim_matrix, clinton_tfidf = generate_similarity_matrix(clinton_clean)
+    exemplar_clinton = exemplar_tweet_extraction(clinton_sim_matrix,clinton_clean, clinton)
     #
-    # clinton_clustered = exemplar_clustering(clinton,exemplar_clinton, clinton_sim_matrix)
+    clinton_clustered = exemplar_clustering(clinton,exemplar_clinton, clinton_sim_matrix)
     #
     # trump_clean = clean_data(trump)
     # trump_sim_matrix,trump_tfidf = generate_similarity_matrix(trump_clean)
@@ -173,6 +173,7 @@ if __name__ == '__main__':
     # trump_clustered = exemplar_clustering(trump,exemplar_trump,trump_sim_matrix)
 
 
-    # for x in range(len(trump_clustered)):
-    #     print "----------------cluster: ",x,"------------------"
-    #     print trump_clustered[x]
+    for x in range(len(clinton_clustered)):
+        print "----------------cluster: ",x,"------------------"
+        for tweet in clinton_clustered[x]:
+            print tweet , '\n'
