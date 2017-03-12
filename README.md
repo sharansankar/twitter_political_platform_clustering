@@ -14,3 +14,4 @@ Thus from these 3 cases, the tweets that fall under case 2 can be said to be exe
 
 ##Implementation 
 ###Tweets 
+This clustering algorithm was implemented using the Hillary Clinton and Donald Trump Tweets dataset on kaggle (https://www.kaggle.com/benhamner/clinton-trump-tweets). 
