@@ -24,4 +24,14 @@ Intuitively, I would believe that the candidates would use twitter as a medium t
   3. lemmatizing all tokens 
   4. Filtering out stopwords 
 
-After preprocessing the tweets, the 
+After preprocessing the tweets, the wordclouds generated failed to abide by my assumptions: 
+__Donald Trump Tweets__
+![Trump](images/trump_cloud.png)
+
+__Hillary Clinton Tweets__
+![Hillary](images/clinton_cloud.png) 
+
+As we can see the most frequent terms that candidates tweeted were their rivals. What stood out to me most was that Hillary's tweets talked most about Tump, but Trump's tweets also talked most about himself. Thus after looking at the tweets, I was unsure of the success of clustering by topic but decided to continue pursuing the goal.
+
+d
+
