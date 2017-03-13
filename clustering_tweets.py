@@ -155,6 +155,44 @@ def spectral_clustering(tfidf, tweets):
         tweet_clusters[cluster[x]].append(tweets[x])
     return tweet_clusters
 
+def match_clusters(cluster1,cluster2):
+    c_cluster1 = [[] for x in range(10)]
+    c_cluster2 = [[] for x in range(10)]
+
+    similar_clusters = [[] for x in range(10)]
+    for x in range(len(cluster1)):
+        c_cluster1[x] = ' '.join(cluster1[x])
+
+
+
+    for x in range(len(cluster2)):
+        c_cluster2[x] = ' '.join(cluster2[x])
+
+
+    combined_clusters = c_cluster1 + c_cluster2
+
+    combined_sim, combined_tfidf = generate_similarity_matrix(combined_clusters)
+
+    already_clustered = []
+    for x in range(10):
+        counter = 0
+        sim_vals = [0 for y in range(10)]
+        for y in range(10,20):
+            sim_vals[counter] = combined_sim[x][y]
+            counter += 1
+        combine_index = sim_vals.index(max(sim_vals))
+
+        while combine_index in already_clustered:
+            sim_vals[combine_index] = -1
+            combine_index = sim_vals.index(max(sim_vals))
+
+        already_clustered.append(combine_index)
+        print combine_index
+        similar_clusters[x] =cluster1[x] + cluster2[combine_index]
+
+    return similar_clusters
+
+
 if __name__ == '__main__':
     trump, clinton = read_data('tweets.csv')
     #clinton = np.concatenate((trump, clinton), axis=0)
@@ -167,13 +205,31 @@ if __name__ == '__main__':
     #
     clinton_clustered = exemplar_clustering(clinton,exemplar_clinton, clinton_sim_matrix)
     #
-    # trump_clean = clean_data(trump)
-    # trump_sim_matrix,trump_tfidf = generate_similarity_matrix(trump_clean)
-    # exemplar_trump = exemplar_tweet_extraction(trump_sim_matrix.transpose(),trump_clean, trump)
-    # trump_clustered = exemplar_clustering(trump,exemplar_trump,trump_sim_matrix)
+    trump_clean = clean_data(trump)
+    trump_sim_matrix,trump_tfidf = generate_similarity_matrix(trump_clean)
+    exemplar_trump = exemplar_tweet_extraction(trump_sim_matrix.transpose(),trump_clean, trump)
+    trump_clustered = exemplar_clustering(trump,exemplar_trump,trump_sim_matrix)
 
+    for x in range(len(trump_clustered)):
+        for y in range(len(trump_clustered[x])):
+            trump_clustered[x][y] = "TRUMP: " + trump_clustered[x][y]
 
     for x in range(len(clinton_clustered)):
+        for y in range(len(clinton_clustered[x])):
+            clinton_clustered[x][y] = "HILLARY: " + clinton_clustered[x][y]
+
+
+    combined = match_clusters(trump_clustered, clinton_clustered)
+
+
+    for x in range(len(combined)):
         print "----------------cluster: ",x,"------------------"
-        for tweet in clinton_clustered[x]:
-            print tweet , '\n'
+        for tweet in combined[x]:
+            print tweet, '\n'
+
+    #
+    # for x in range(len(trump_clustered)):
+    #     print "----------------cluster: ",x,"------------------"
+    #     for tweet in trump_clustered[x]:
+    #         print tweet , '\n'
+
